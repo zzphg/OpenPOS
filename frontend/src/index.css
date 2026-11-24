@@ -1,129 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
+/* =====================================================================
+   OpenPOS — sistema de design
+   Todas as cores, fontes, raios e sombras ficam aqui. Os demais .css só
+   usam var(--...), então a identidade inteira muda mexendo neste arquivo.
+   ===================================================================== */
 :root {
-  /* -------- Paleta -------- */
-  /* Base: ardósia escura (não preto puro), fica confortável em uso
-     prolongado de loja/caixa. Accent: esmeralda, remete a caixa
-     registradora / dinheiro / "confirmado" sem ser o azul-roxo genérico
-     de dashboard SaaS. */
-  --slate-950: #0d1117;
-  --slate-900: #141b24;
-  --slate-850: #1a232e;
-  --slate-800: #212c39;
-  --slate-700: #2e3c4d;
-  --slate-600: #465267;
-  --slate-500: #6b7889;
-  --slate-400: #96a2b0;
-  --slate-300: #c3cad3;
-  --slate-100: #eef1f4;
+  /* ------------------------------------------------------------------
+     Marca: gradiente da logo (lavanda > azul-lavanda > azul-claro)
+     ------------------------------------------------------------------ */
+  --brand-lavender: #a390f2;
+  --brand-periwinkle: #799df5;
+  --brand-sky: #4fd5f9;
+  --brand-gradient: linear-gradient(135deg, #a390f2 0%, #799df5 52%, #4fd5f9 100%);
+  --on-brand: #14122b; /* ícone/texto sobre os tons claros da marca */
 
-  --emerald-500: #17b978;
-  --emerald-400: #2ed08e;
-  --emerald-600: #109962;
-  --emerald-glow: rgba(23, 185, 120, 0.18);
+  /* Faixa de destaque no topo das telas (estilo Argon). O texto fica na
+     parte esquerda, a mais escura, para manter contraste AA. */
+  --band: linear-gradient(115deg, #3b31b8 0%, #4a5ee0 46%, #3b93e2 78%, #4fd5f9 100%);
 
-  --amber-500: #e2a836;
-  --rose-500: #e05a5a;
-  --blue-500: #4d8de0;
+  /* Ação principal: índigo derivado da família da logo */
+  --primary: #5b4be8;
+  --primary-hover: #4c3dd6;
+  --primary-press: #4033bd;
+  --primary-ink: #4437c9;          /* texto/ícone colorido sobre fundo claro */
+  --primary-tint: #eeecfd;
+  --primary-ring: rgba(91, 75, 232, 0.28);
 
-  --bg: var(--slate-950);
-  --surface: var(--slate-900);
-  --surface-raised: var(--slate-850);
-  --border: var(--slate-700);
-  --text: var(--slate-100);
-  --text-muted: var(--slate-400);
-  --text-dim: var(--slate-500);
+  /* Superfícies e linhas */
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-sunken: #f0f2f9;
+  --surface-hover: #f8f9fd;
+  --line: #e6e9f2;
+  --line-strong: #d3d8e6;
+  --line-input: #8e8cad;           /* borda de campo: contraste 3:1 */
 
-  /* -------- Tipografia -------- */
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Texto */
+  --text: #15132e;
+  --text-muted: #4f4d6b;
+  --text-dim: #67658a;
 
-  /* -------- Espaçamento -------- */
-  --radius-sm: 6px;
+  /* Menu lateral */
+  --side-bg: #ffffff;
+  --side-line: #e6e9f2;
+  --side-text: #4f4d6b;
+  --side-strong: #15132e;
+  --side-dim: #67658a;
+  --side-hover: #f4f3fd;
+  --side-active-bg: #eeecfd;
+  --side-active-text: #4437c9;
+
+  /* Cartão escuro de destaque (gráfico principal) */
+  --hero-bg: #1d1a3f;
+  --hero-text: #ffffff;
+  --hero-muted: #b9b7dc;
+  --hero-grid: rgba(255, 255, 255, 0.1);
+
+  /* Categorias (as duas primeiras vêm da logo) */
+  --lavender-tint: #f1edfd;
+  --lavender-ink: #5a45c6;
+  --sky-tint: #e1f6fd;
+  --sky-ink: #0b6480;
+  --other-tint: #eeeef6;
+
+  /* Estados */
+  --success: #0f7a57;
+  --success-tint: #e4f5ee;
+  --warning: #965e00;
+  --warning-tint: #fff3d6;
+  --danger: #c0362c;
+  --danger-hover: #a52c23;
+  --danger-tint: #fdecea;
+  --danger-line: #f0bcb7;
+
+  /* Gráficos */
+  --chart-line-a: #a390f2;
+  --chart-line-b: #4fd5f9;
+  --chart-foods: var(--brand-lavender);
+  --chart-drinks: var(--brand-sky);
+  --chart-other: #c4c2da;
+  --chart-grid: #e6e9f2;
+  --chart-tick: #67658a;
+
+  /* Tipografia */
+  --font-display: 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Forma e elevação */
+  --radius-sm: 8px;
   --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --shadow-sm: 0 1px 2px rgba(21, 19, 46, 0.05);
+  --shadow-card: 0 2px 4px rgba(21, 19, 46, 0.04), 0 10px 28px rgba(21, 19, 46, 0.07);
+  --shadow-pop: 0 24px 60px rgba(21, 19, 46, 0.28);
+  --overlay: rgba(20, 18, 43, 0.55);
+
+  color-scheme: light;
+}
+
+/* ====================================================================
+   Tema escuro (inspirado no Black Dashboard). Ativado pelo botão do menu;
+   a escolha fica salva no navegador.
+   ==================================================================== */
+:root[data-theme='dark'] {
+  --band: linear-gradient(115deg, #231d6b 0%, #2c3a9a 48%, #2a67b0 80%, #2a96bd 100%);
+
+  --primary: #6657ee;
+  --primary-hover: #7a6cf5;
+  --primary-press: #5a4be0;
+  --primary-ink: #b4abff;
+  --primary-tint: rgba(122, 108, 255, 0.16);
+  --primary-ring: rgba(150, 138, 255, 0.35);
+
+  --bg: #12112a;
+  --surface: #1c1b3a;
+  --surface-sunken: #171634;
+  --surface-hover: #212044;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --line-input: #7c7aa6;
+
+  --text: #eceaf9;
+  --text-muted: #b9b7da;
+  --text-dim: #9391b8;
+
+  --side-bg: #171636;
+  --side-line: rgba(255, 255, 255, 0.07);
+  --side-text: #b9b7da;
+  --side-strong: #ffffff;
+  --side-dim: #9391b8;
+  --side-hover: rgba(255, 255, 255, 0.05);
+  --side-active-bg: rgba(122, 108, 255, 0.18);
+  --side-active-text: #dcd7ff;
+
+  --hero-bg: #232152;
+  --hero-grid: rgba(255, 255, 255, 0.09);
+
+  --lavender-tint: rgba(163, 144, 242, 0.18);
+  --lavender-ink: #cbbfff;
+  --sky-tint: rgba(79, 213, 249, 0.16);
+  --sky-ink: #86e3fb;
+  --other-tint: rgba(255, 255, 255, 0.08);
+
+  --success: #4fdca4;
+  --success-tint: rgba(79, 220, 164, 0.14);
+  --warning: #ffc861;
+  --warning-tint: rgba(255, 200, 97, 0.14);
+  --danger: #ff8077;
+  --danger-hover: #ff6a60;
+  --danger-tint: rgba(255, 128, 119, 0.14);
+  --danger-line: rgba(255, 128, 119, 0.4);
+
+  --chart-other: #5a5886;
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-tick: #9391b8;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.25), 0 12px 32px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --overlay: rgba(6, 5, 20, 0.7);
 
   color-scheme: dark;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   min-height: 100vh;
-  background-image:
-    radial-gradient(circle at 10% 0%, rgba(23, 185, 120, 0.06), transparent 40%),
-    radial-gradient(circle at 90% 90%, rgba(77, 141, 224, 0.05), transparent 45%);
-  background-attachment: fixed;
 }
 
-#root {
-  min-height: 100vh;
-}
+#root { min-height: 100vh; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
+  font-weight: 700;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
-p {
-  margin: 0;
-}
+p { margin: 0; }
+button, input, select, textarea { font-family: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: transparent; }
+a { color: inherit; text-decoration: none; }
 
-button, input, select, textarea {
-  font-family: inherit;
-  color: inherit;
-}
+/* Valores monetários e quantidades: algarismos de mesma largura */
+.mono { font-variant-numeric: tabular-nums; }
 
-button {
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--line-input); background-clip: padding-box; border: 2px solid transparent; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.mono {
-  font-family: var(--font-mono);
-}
-
-/* -------- Scrollbar discreta -------- */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--slate-700);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--slate-600);
-}
-
-/* -------- Foco visível (acessibilidade) -------- */
-:focus-visible {
-  outline: 2px solid var(--emerald-400);
-  outline-offset: 2px;
-}
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
