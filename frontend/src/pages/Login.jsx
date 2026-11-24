@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import './Auth.css'
+import AuthShell from '../components/AuthShell'
 
 export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -26,51 +27,51 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-screen">
-      <div className="auth-card">
-        <div className="auth-brand">
-          <span className="auth-mark">OP</span>
-          <span>OpenPOS</span>
+    <AuthShell>
+      <h1>Entrar na sua conta</h1>
+      <p className="auth-subtitle">Acesse o caixa, os produtos e os resultados da sua loja.</p>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="field">
+          <label htmlFor="username">Usuário</label>
+          <input
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="seu.usuario"
+            autoComplete="username"
+            autoFocus
+            required
+          />
         </div>
-
-        <h1>Entrar na conta</h1>
-        <p className="auth-subtitle">Acesse seu caixa e seus produtos.</p>
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="field">
-            <label htmlFor="username">Usuário</label>
-            <input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="seu.usuario"
-              autoFocus
-              required
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="password">Senha</label>
+        <div className="field">
+          <label htmlFor="password">Senha</label>
+          <div className="password-wrap">
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Sua senha"
+              autoComplete="current-password"
               required
             />
+            <button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)}>
+              {showPassword ? 'Ocultar' : 'Mostrar'}
+            </button>
           </div>
-
-          {error && <div className="auth-error">{error}</div>}
-
-          <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
-            {submitting ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
-
-        <p className="auth-footer">
-          Ainda não tem conta? <Link to="/registrar">Criar conta</Link>
-        </p>
-      </div>
-    </div>
+        </div>
+        {error && (
+          <div className="auth-error" role="alert">
+            {error}
+          </div>
+        )}
+        <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={submitting}>
+          {submitting ? 'Entrando...' : 'Entrar'}
+        </button>
+      </form>
+      <p className="auth-footer">
+        Ainda não tem conta? <Link to="/registrar">Criar conta grátis</Link>
+      </p>
+    </AuthShell>
   )
 }
