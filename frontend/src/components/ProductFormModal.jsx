@@ -67,17 +67,20 @@ export default function ProductFormModal({ open, product, onClose, onSave }) {
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <form className="product-form-card" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
-        <h3>{product ? 'Editar produto' : 'Novo produto'}</h3>
+      <form className="product-form-card" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit} noValidate>
+        <div className="product-form-head">
+          <h3>{product ? 'Editar produto' : 'Novo produto'}</h3>
+          <p>{product ? 'Atualize os dados e salve.' : 'Preencha o básico. Você pode editar depois.'}</p>
+        </div>
 
         <div className="field">
-          <label htmlFor="product-name">Nome</label>
+          <label htmlFor="product-name">Nome do produto</label>
           <input
             id="product-name"
             className={errors.name ? 'has-error' : ''}
             value={values.name}
             onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-            placeholder="Ex.: Arroz 5kg"
+            placeholder="Ex.: Café coado 200 ml"
             autoFocus
           />
           {errors.name && <span className="field-error">{errors.name}</span>}
@@ -85,47 +88,51 @@ export default function ProductFormModal({ open, product, onClose, onSave }) {
 
         <div className="product-form-row">
           <div className="field">
-            <label htmlFor="product-price">Preço (R$)</label>
-            <input
-              id="product-price"
-              className={errors.price ? 'has-error' : ''}
-              value={values.price}
-              onChange={(e) => setValues((v) => ({ ...v, price: e.target.value }))}
-              placeholder="0.00"
-              inputMode="decimal"
-            />
+            <label htmlFor="product-price">Preço de venda</label>
+            <div className="input-affix">
+              <span aria-hidden="true">R$</span>
+              <input
+                id="product-price"
+                className={errors.price ? 'has-error' : ''}
+                value={values.price}
+                onChange={(e) => setValues((v) => ({ ...v, price: e.target.value }))}
+                placeholder="0,00"
+                inputMode="decimal"
+              />
+            </div>
             {errors.price && <span className="field-error">{errors.price}</span>}
           </div>
-
           <div className="field">
-            <label htmlFor="product-stock">Estoque (un.)</label>
-            <input
-              id="product-stock"
-              className={errors.stock ? 'has-error' : ''}
-              value={values.stock}
-              onChange={(e) => setValues((v) => ({ ...v, stock: e.target.value }))}
-              placeholder="0"
-              inputMode="numeric"
-            />
+            <label htmlFor="product-stock">Estoque</label>
+            <div className="input-affix suffix">
+              <input
+                id="product-stock"
+                className={errors.stock ? 'has-error' : ''}
+                value={values.stock}
+                onChange={(e) => setValues((v) => ({ ...v, stock: e.target.value }))}
+                placeholder="0"
+                inputMode="numeric"
+              />
+              <span aria-hidden="true">un.</span>
+            </div>
             {errors.stock && <span className="field-error">{errors.stock}</span>}
           </div>
         </div>
 
-        <div className="product-form-row">
-          <div className="field">
-            <label htmlFor="product-category">Categoria</label>
-            <select
-              id="product-category"
-              value={values.category}
-              onChange={(e) => setValues((v) => ({ ...v, category: e.target.value }))}
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="field">
+          <label htmlFor="product-category">Categoria</label>
+          <select
+            id="product-category"
+            value={values.category}
+            onChange={(e) => setValues((v) => ({ ...v, category: e.target.value }))}
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <span className="field-hint">Define em qual aba o produto aparece no Caixa e na loja online.</span>
         </div>
 
         <div className="dialog-actions">
