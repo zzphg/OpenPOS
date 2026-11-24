@@ -3,7 +3,7 @@
 // /api/public/... e o MESMO serviço de checkout do Caixa no back-end:
 // estoque baixa automaticamente e o desconto de 5% (> R$ 200) é aplicado.
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { useToast } from '../context/ToastContext'
@@ -29,6 +29,7 @@ export default function Store() {
   const rules = usePricingRules()
   const { cart, totals, qtyOf, add, changeQty, remove, clear } = useCart(rules)
   const { push } = useToast()
+  const cartRef = useRef(null)
   const percent = Math.round(rules.discountRate * 100)
 
   useEffect(() => {
@@ -86,129 +87,215 @@ export default function Store() {
     return (
       <div className="store-shell">
         <div className="empty-state">
+          <span className="empty-icon">
+            <IconStore />
+          </span>
           <div className="empty-state-title">Loja não encontrada</div>
-          <p>Confira o endereço com o mercado.</p>
+          <p>Confira o endereço com a loja. O link deve terminar com o nome de usuário do lojista.</p>
         </div>
       </div>
     )
   }
 
   const itemsCount = cart.reduce((n, i) => n + i.qty, 0)
+  const storeName = store?.name || username
 
   return (
-    <div className="store-shell">
-      <header className="store-header">
-        <div className="store-brand">
-          <span className="sidebar-mark">{(store?.name || username)[0].toUpperCase()}</span>
-          <div>
-            <h1>{store?.name || username}</h1>
-            <p>Compre online · retire na loja</p>
+    <div className="store-page">
+      <header className="store-hero">
+        <div className="store-hero-inner">
+          <div className="store-brand">
+            <span className="sidebar-mark">{storeName[0].toUpperCase()}</span>
+            <div>
+              <h1>{storeName}</h1>
+              <p>Compre online · retire na loja</p>
+            </div>
           </div>
-        </div>
-        <div className="store-promo">
-          <strong>{percent}% OFF</strong> em compras acima de {formatCurrency(rules.discountThreshold)}
+          <div className="store-promo">
+            <strong>{percent}% OFF</strong> em compras acima de {formatCurrency(rules.discountThreshold)}
+          </div>
         </div>
       </header>
 
-      <div className="store-layout">
-        <section>
-          <div className="store-toolbar">
-            <input
-              className="store-search"
-              placeholder="Buscar produto..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <div className="category-tabs">
-              {Object.keys(CATEGORY_LABELS).map((cat) => (
+      <div className="store-shell">
+        <div className="store-layout">
+          <section>
+            <div className="store-toolbar">
+              <div className="field search-input store-search-wrap">
+                <IconSearch />
+                <input
+                  className="store-search"
+                  placeholder="Buscar produto"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Buscar produto"
+                />
+              </div>
+              <div className="segmented category-tabs" role="tablist" aria-label="Categorias">
+                {Object.keys(CATEGORY_LABELS).map((cat) => (
+                  <button
+                    key={cat}
+                    role="tab"
+                    aria-selected={category === cat}
+                    className={`segment category-tab${category === cat ? ' active' : ''}`}
+                    onClick={() => setCategory(cat)}
+                  >
+                    {CATEGORY_LABELS[cat]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {visible.length === 0 ? (
+              <div className="empty-state">
+                <span className="empty-icon">
+                  <IconSearch />
+                </span>
+                <div className="empty-state-title">Nenhum produto encontrado</div>
+                <p>Tente outro termo ou escolha outra categoria.</p>
                 <button
-                  key={cat}
-                  className={`category-tab${category === cat ? ' active' : ''}`}
-                  onClick={() => setCategory(cat)}
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setSearch('')
+                    setCategory('all')
+                  }}
                 >
-                  {CATEGORY_LABELS[cat]}
+                  Ver todos os produtos
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {visible.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-title">Nenhum produto encontrado</div>
-            </div>
-          ) : (
-            <div className="store-grid">
-              {visible.map((p) => {
-                const available = p.stock - qtyOf(p._id)
-                return (
-                  <article key={p._id} className={`store-card${p.stock <= 0 ? ' sold-out' : ''}`}>
-                    <span className={`badge badge-${p.category.toLowerCase()}`}>{CATEGORY_LABELS[p.category]}</span>
-                    <h3>{p.name}</h3>
-                    <div className="store-card-price mono">{formatCurrency(p.price)}</div>
-                    <div className="store-card-stock">
-                      {p.stock <= 0 ? 'Esgotado' : `${p.stock} em estoque`}
-                    </div>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      disabled={available <= 0}
-                      onClick={() => handleAdd(p)}
-                    >
-                      {p.stock <= 0 ? 'Indisponível' : available <= 0 ? 'Limite do estoque' : 'Adicionar'}
-                    </button>
-                  </article>
-                )
-              })}
-            </div>
-          )}
-        </section>
-
-        <aside className="cart-panel store-cart">
-          <div className="cart-header">
-            <h2>Seu carrinho {itemsCount > 0 && <span className="mono">({itemsCount})</span>}</h2>
-            {cart.length > 0 && (
-              <button className="btn btn-ghost btn-sm" onClick={clear}>
-                Esvaziar
-              </button>
-            )}
-          </div>
-
-          <div className="cart-items">
-            {cart.length === 0 ? (
-              <div className="cart-empty">
-                <p>Seu carrinho está vazio</p>
               </div>
             ) : (
-              cart.map((item) => (
-                <div key={item.productId} className="cart-item">
-                  <div className="cart-item-info">
-                    <span className="cart-item-name">{item.name}</span>
-                    <span className="cart-item-unit mono">{formatCurrency(item.price)} un.</span>
-                  </div>
-                  <div className="cart-item-controls">
-                    <button className="qty-btn" onClick={() => changeQty(item.productId, -1)}>−</button>
-                    <span className="qty-value mono">{item.qty}</span>
-                    <button className="qty-btn" onClick={() => changeQty(item.productId, 1)} disabled={item.qty >= item.stock}>+</button>
-                  </div>
-                  <span className="cart-item-total mono">{formatCurrency(item.price * item.qty)}</span>
-                  <button className="cart-item-remove" onClick={() => remove(item.productId)} aria-label="Remover item">
-                    ×
-                  </button>
-                </div>
-              ))
+              <div className="store-grid">
+                {visible.map((p) => {
+                  const inCart = qtyOf(p._id)
+                  const available = p.stock - inCart
+                  return (
+                    <article key={p._id} className={`store-card${p.stock <= 0 ? ' sold-out' : ''}`}>
+                      <div className={`store-thumb thumb-${p.category.toLowerCase()}`} aria-hidden="true">
+                        {p.name[0].toUpperCase()}
+                      </div>
+                      <div className="store-card-body">
+                        <span className={`badge badge-${p.category.toLowerCase()}`}>{CATEGORY_LABELS[p.category]}</span>
+                        <h3>{p.name}</h3>
+                        <div className="store-card-price mono">{formatCurrency(p.price)}</div>
+                        <div className={`store-card-stock${p.stock > 0 && p.stock <= 5 ? ' low' : ''}`}>
+                          {p.stock <= 0 ? 'Esgotado' : p.stock <= 5 ? `Restam só ${p.stock}` : 'Em estoque'}
+                        </div>
+                      </div>
+                      {inCart > 0 ? (
+                        <div className="store-stepper">
+                          <button onClick={() => changeQty(p._id, -1)} aria-label={`Diminuir ${p.name}`}>
+                            −
+                          </button>
+                          <span className="mono">{inCart} no carrinho</span>
+                          <button onClick={() => handleAdd(p)} disabled={available <= 0} aria-label={`Aumentar ${p.name}`}>
+                            +
+                          </button>
+                        </div>
+                      ) : (
+                        <button className="btn btn-primary" disabled={available <= 0} onClick={() => handleAdd(p)}>
+                          {p.stock <= 0 ? 'Indisponível' : 'Adicionar ao carrinho'}
+                        </button>
+                      )}
+                    </article>
+                  )
+                })}
+              </div>
             )}
-          </div>
+          </section>
 
-          <div className="cart-footer">
-            <CartTotals totals={totals} rules={rules} />
-            <button className="btn btn-primary checkout-btn" disabled={!cart.length || buying} onClick={handleBuy}>
-              {buying ? 'Processando...' : 'Finalizar compra'}
-            </button>
-          </div>
-        </aside>
+          <aside ref={cartRef} className="cart-panel store-cart" aria-label="Seu carrinho">
+            <div className="cart-header">
+              <h2>
+                Seu carrinho {itemsCount > 0 && <span className="cart-count mono">{itemsCount}</span>}
+              </h2>
+              {cart.length > 0 && (
+                <button className="btn btn-ghost btn-sm" onClick={clear}>
+                  Esvaziar
+                </button>
+              )}
+            </div>
+            <div className="cart-items">
+              {cart.length === 0 ? (
+                <div className="cart-empty">
+                  <span className="empty-icon">
+                    <IconCart />
+                  </span>
+                  <strong>Seu carrinho está vazio</strong>
+                  <p>Adicione produtos para ver o total e finalizar a compra.</p>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <div key={item.productId} className="cart-item">
+                    <div className="cart-item-info">
+                      <span className="cart-item-name">{item.name}</span>
+                      <span className="cart-item-unit mono">{formatCurrency(item.price)} cada</span>
+                    </div>
+                    <div className="cart-item-controls">
+                      <button className="qty-btn" onClick={() => changeQty(item.productId, -1)} aria-label={`Diminuir ${item.name}`}>
+                        −
+                      </button>
+                      <span className="qty-value mono">{item.qty}</span>
+                      <button className="qty-btn" onClick={() => changeQty(item.productId, 1)} disabled={item.qty >= item.stock} aria-label={`Aumentar ${item.name}`}>
+                        +
+                      </button>
+                    </div>
+                    <span className="cart-item-total mono">{formatCurrency(item.price * item.qty)}</span>
+                    <button className="cart-item-remove" onClick={() => remove(item.productId)} aria-label={`Remover ${item.name}`}>
+                      ×
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="cart-footer">
+              <CartTotals totals={totals} rules={rules} />
+              <button className="btn btn-primary btn-lg checkout-btn" disabled={!cart.length || buying} onClick={handleBuy}>
+                {buying ? 'Processando...' : 'Finalizar compra'}
+              </button>
+            </div>
+          </aside>
+        </div>
       </div>
+
+      {/* telas pequenas: atalho fixo para o carrinho */}
+      {itemsCount > 0 && (
+        <button className="store-cartbar" onClick={() => cartRef.current?.scrollIntoView({ behavior: 'smooth' })}>
+          <span>
+            Ver carrinho <span className="mono">({itemsCount})</span>
+          </span>
+          <strong className="mono">{formatCurrency(totals.total)}</strong>
+        </button>
+      )}
 
       {receipt && <Receipt receipt={receipt} onClose={() => setReceipt(null)} />}
     </div>
+  )
+}
+
+function IconSearch() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+function IconCart() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="20" r="1" />
+      <circle cx="18" cy="20" r="1" />
+      <path d="M2.5 3h2l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 8H6" />
+    </svg>
+  )
+}
+function IconStore() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9h18l-1.5-5h-15Z" />
+      <path d="M5 9v11h14V9" />
+      <path d="M10 20v-6h4v6" />
+    </svg>
   )
 }
 
