@@ -1,44 +1,12 @@
-.cart-totals {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.cart-totals { display: flex; flex-direction: column; gap: 10px; }
+.cart-totals-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.cart-totals-discount { color: var(--success); font-weight: 600; background: var(--success-tint); padding: 8px 12px; border-radius: var(--radius-sm); }
 
-.cart-totals-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--text-muted);
-}
+.cart-totals-hint { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.cart-totals-hint-text { font-size: 13px; color: var(--text-muted); }
+.cart-totals-hint-text strong { color: var(--text); font-weight: 700; }
+.cart-progress { height: 6px; border-radius: 3px; background: var(--surface-sunken); overflow: hidden; }
+.cart-progress span { display: block; height: 100%; border-radius: 3px; background: var(--brand-gradient); transition: width 0.3s ease; }
 
-.cart-totals-discount {
-  color: var(--emerald-400);
-  font-weight: 600;
-}
-
-.cart-totals-hint {
-  font-size: 12px;
-  color: var(--text-dim);
-  background: var(--slate-850);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-}
-
-.cart-totals-hint strong {
-  color: var(--amber-500);
-}
-
-.cart-totals .cart-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 14px;
-  color: var(--text-muted);
-  padding-top: 6px;
-}
-
-.cart-totals .cart-total {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-}
+.cart-totals .cart-total-row { display: flex; justify-content: space-between; align-items: baseline; padding-top: 4px; font-size: 15px; font-weight: 600; color: var(--text-muted); }
+.cart-totals .cart-total { font: 800 38px/1.05 var(--font-display); letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }

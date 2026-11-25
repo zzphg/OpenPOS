@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import './Auth.css'
+import AuthShell from '../components/AuthShell'
 
 const EMPTY = { name: '', email: '', username: '', password: '', password2: '' }
 
@@ -43,52 +43,46 @@ export default function Register() {
   }
 
   return (
-    <div className="auth-screen">
-      <div className="auth-card">
-        <div className="auth-brand">
-          <span className="auth-mark">OP</span>
-          <span>OpenPOS</span>
+    <AuthShell>
+      <h1>Crie sua conta</h1>
+      <p className="auth-subtitle">Leva menos de um minuto. Depois é só cadastrar seus produtos e vender.</p>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="field">
+          <label htmlFor="name">Seu nome</label>
+          <input id="name" value={values.name} onChange={update('name')} placeholder="Como devemos te chamar" autoComplete="name" autoFocus required />
         </div>
-
-        <h1>Criar conta</h1>
-        <p className="auth-subtitle">Leva menos de um minuto.</p>
-
-        <form onSubmit={handleSubmit} className="auth-form">
+        <div className="field">
+          <label htmlFor="email">E-mail</label>
+          <input id="email" type="email" value={values.email} onChange={update('email')} placeholder="voce@email.com" autoComplete="email" required />
+        </div>
+        <div className="field">
+          <label htmlFor="reg-username">Nome de usuário</label>
+          <input id="reg-username" value={values.username} onChange={update('username')} placeholder="seu.usuario" autoComplete="username" required />
+          <span className="field-hint">É com ele que você entra e que aparece no link da sua loja online.</span>
+        </div>
+        <div className="auth-form-row">
           <div className="field">
-            <label htmlFor="name">Nome</label>
-            <input id="name" value={values.name} onChange={update('name')} placeholder="Seu nome" autoFocus required />
+            <label htmlFor="reg-password">Senha</label>
+            <input id="reg-password" type="password" value={values.password} onChange={update('password')} placeholder="Mínimo 6 caracteres" autoComplete="new-password" required />
           </div>
           <div className="field">
-            <label htmlFor="email">E-mail</label>
-            <input id="email" type="email" value={values.email} onChange={update('email')} placeholder="voce@email.com" required />
+            <label htmlFor="reg-password2">Repita a senha</label>
+            <input id="reg-password2" type="password" value={values.password2} onChange={update('password2')} placeholder="Digite de novo" autoComplete="new-password" required />
           </div>
-          <div className="field">
-            <label htmlFor="reg-username">Usuário</label>
-            <input id="reg-username" value={values.username} onChange={update('username')} placeholder="seu.usuario" required />
+        </div>
+        {error && (
+          <div className="auth-error" role="alert">
+            {error}
           </div>
-          <div className="auth-form-row">
-            <div className="field">
-              <label htmlFor="reg-password">Senha</label>
-              <input id="reg-password" type="password" value={values.password} onChange={update('password')} placeholder="••••••••" required />
-            </div>
-            <div className="field">
-              <label htmlFor="reg-password2">Confirmar senha</label>
-              <input id="reg-password2" type="password" value={values.password2} onChange={update('password2')} placeholder="••••••••" required />
-            </div>
-          </div>
-
-          {error && <div className="auth-error">{error}</div>}
-
-          <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
-            {submitting ? 'Criando conta...' : 'Criar conta'}
-          </button>
-        </form>
-
-        <p className="auth-footer">
-          Já tem conta? <Link to="/login">Entrar</Link>
-        </p>
-      </div>
-    </div>
+        )}
+        <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={submitting}>
+          {submitting ? 'Criando conta...' : 'Criar conta'}
+        </button>
+      </form>
+      <p className="auth-footer">
+        Já tem conta? <Link to="/login">Entrar</Link>
+      </p>
+    </AuthShell>
   )
 }
 
